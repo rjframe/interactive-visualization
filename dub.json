@@ -1,0 +1,34 @@
+{
+	"name": "interactive_visualization",
+	"authors": [
+		"Ryan Frame"
+	],
+	"description": "Interactive data visualization tool",
+	"copyright": "Copyright © 2018 Ryan Frame",
+	"license": "MIT",
+	"dependencies": {
+		"plot2d": "~>0.1.5",
+		"dlangui": "~>0.9.177"
+	},
+    "subConfigurations": {
+        "plot2d": "dlangui"
+    },
+    "configurations": [
+        {
+            "name": "executable",
+            "targetType": "executable"
+        },
+        {
+            "name": "unittest",
+            "targetType": "executable",
+            "preBuildCommands": [ "dub run unit-threaded -c gen_ut_main -- -f bin/ut.d" ],
+            "mainSourceFile": "bin/ut.d",
+            "sourcePaths": [ "tests" ],
+            "importPaths": [ "source", "tests" ],
+            "excludedSourceFiles": [ "source/app.d" ],
+            "dependencies": {
+                "unit-threaded": "~>0.7.43"
+            }
+        }
+    ]
+}

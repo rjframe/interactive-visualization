@@ -25,6 +25,7 @@ auto mainLayout() {
                 ResizerWidget {}
                 EditBox {
                     id: "formulas"
+                    text: "@A1\n@A2\ny{green} = x^1.3"
                 }
             }
             ResizerWidget {}
@@ -60,7 +61,8 @@ auto prepareWindow() {
     table.vscrollbarMode = ScrollBarMode.Invisible;
     table.minHeight = table.defRowHeight * 6;
     table.layoutWidth = FILL_PARENT;
-    table.setCellText(0, 0, "y = x^2 + 1");
+    table.setCellText(0, 0, "y{blue} = x^2 + 1");
+    table.setCellText(0, 1, "y{red} = x^0.5");
     table.autoFit();
 
     window.show();
@@ -74,38 +76,47 @@ class PlotWidget : CanvasWidget {
     DlangUICtx ctx;
 
     this(string id = null) {
+        import plot2d.types : PlotPoint = Point;
         super(id);
 
-        plot = new Plot;
+        plot = new Plot();
         plot.settings.minGridStep.x = 80;
         plot.settings.minGridStep.y = 80;
-        ctx = new DlangUICtx;
+        ctx = new DlangUICtx();
 
-        auto mf(float i) { return sin(i*sin(i+ct()*0.5)*PI*2); }
-        auto tre = iota(-2, 2.02, 0.02)
-            .map!(i=>TreStat(i, mf(i) + 0.4 + sin(i*PI*2+ct*3) * 0.3,
-                            mf(i), mf(i) - 0.4 - sin(i*PI*2+ct*5) * 0.3));
-
-        plot.add(new TreChart(
-            PColor(0,0.5,0,0.8),
-
-            PColor(1,1,0,.3),
-            PColor(1,1,0,.2),
-
-            PColor(0,1,1,.3),
-            PColor(0,1,1,.2),
-            (ref Appender!(TreStat[]) buf) { buf.put(tre.save); }
-        ));
-
-        plot.settings.viewport = Viewport(DimSeg(-2,2), DimSeg(-1, 2));
+        plot.settings.viewport = Viewport(DimSeg(-50,50), DimSeg(-40, 80));
         plot.settings.autoFit = false;
         plot.settings.padding = Border(0);
+
+
+        PlotPoint[] points;
+        PlotPoint[] points2;
+        PlotPoint[] points3;
+        for (auto x = plot.settings.viewport.w.min; x < plot.settings.viewport.w.max; ++x) {
+            points ~= PlotPoint(cast(int)x, cast(int)x^^2 + 1);
+            if (x > 0.0) {
+                points2 ~= PlotPoint(cast(int)x, cast(int)(x^^(0.5)));
+                points3 ~= PlotPoint(cast(int)x, cast(int)(x^^(1.3)));
+            }
+        }
+
+        plot.add(
+            new LineChart(
+                PColor.blue,
+                (ref Appender!(PlotPoint[]) buf) { buf.put(points); }
+        ));
+        plot.add(
+            new LineChart(
+                PColor.red,
+                (ref Appender!(PlotPoint[]) buf) { buf.put(points2); }
+        ));
+        plot.add(
+            new LineChart(
+                PColor.green,
+                (ref Appender!(PlotPoint[]) buf) { buf.put(points3); }
+        ));
     }
 
-    auto ct() {
-        import std.datetime : Clock;
-        return Clock.currStdTime / 1e7;
-    }
 
     override void doDraw(DrawBuf buf, Rect rc) {
         buf.fillRect(rc, 0xaaaaaa);

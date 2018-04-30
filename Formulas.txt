@@ -1,0 +1,28 @@
+# Formula thoughts/brainstorming/ideas
+
+Multiple expressions are plotted separately; so this is two lines on one graph:
+    y = x^2
+    y = x*(0.5*x)+3
+
+Set properties; obvious properties shouldn't need explicit identification:
+    y{color:green} = x^2
+    y{red} = x*(0.5*x)+3
+
+Assign names to axis:
+    x:xname, y:yname
+    yname{green} = xname^2
+    yname{red} = xname * (0.5 * xname) + 3
+
+
+## Cell references
+
+@@          : entire table
+@A1         : value at cell A1
+@A          : values at col A, abstract over rows
+@1          : values at row 1, abstract over cols
+@A[1-10]    : values at col A, abstract over rows 1 through 10
+@[A-D]5     : values at row 5, abstract over cols A through D
+@[A-D][2-10]:
+
+
+# Formula specification

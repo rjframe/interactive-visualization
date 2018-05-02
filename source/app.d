@@ -15,6 +15,7 @@ extern(C) int UIAppMain(string[] args) {
 auto mainLayout() {
     return parseML(q{
         HorizontalLayout {
+            layoutWidth: fill
             VerticalLayout {
                 layoutHeight: fill
                 PlotWidget {

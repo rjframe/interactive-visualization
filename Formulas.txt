@@ -13,6 +13,7 @@ Assign names to axis:
     yname{green} = xname^2
     yname{red} = xname * (0.5 * xname) + 3
 
+I should be able to treat dates as normal text - it's just a category for data.
 
 ## Cell references
 
@@ -26,3 +27,25 @@ Assign names to axis:
 
 
 # Formula specification
+
+## Notes
+
+Commas are throw-away; they have no semantic meaning and exist for the reader,
+so there's no reason to care about them / enforce any constraints within a
+number. "234,.2,2," is a valid number equivalent to "234.22". No comma prefixes though
+
+Variable names are case-insensitive.
+
+## Specification
+
+comma             <== ,
+letter            <== [a..zA..Z]
+digit             <== [0..9]
+integer           <== [+|-]digit{comma | digit}
+double            <== [+|-]digit{comma | digit}.{comma | digit}
+expression        <== op-expression | integer | double | variable
+binop-expression  <== sum-expression | sub-expression
+sum-expression    <== expression + expression
+sub-expression    <== expression - expression
+variable          <== letter{letter}
+

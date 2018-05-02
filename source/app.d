@@ -58,18 +58,20 @@ auto prepareWindow() {
     window.mainWidget = mainLayout();
 
     auto table = window.mainWidget.childById!TableWidget("table");
-    table.vscrollbarMode = ScrollBarMode.Invisible;
-    table.minHeight = table.defRowHeight * 6;
-    table.layoutWidth = FILL_PARENT;
-    table.setCellText(0, 0, "y{blue} = x^2 + 1");
-    table.setCellText(0, 1, "y{red} = x^0.5");
-    table.autoFit();
+    with (table) {
+        vscrollbarMode = ScrollBarMode.Invisible;
+        minHeight = table.defRowHeight * 6;
+        layoutWidth = FILL_PARENT;
+        setCellText(0, 0, "y{blue} = x^2 + 1");
+        setCellText(0, 1, "y{red} = x^0.5");
+        setColumnHeaders();
+        setRowHeaders();
+        autoFit();
+    }
 
     window.show();
     return window;
 }
-
-/++ Pulled this from plot2d example to use until I'm ready to work on the graph. +/
 
 class PlotWidget : CanvasWidget {
     Plot plot;
@@ -126,13 +128,32 @@ class PlotWidget : CanvasWidget {
     }
 }
 
-/++ END plot2d example. +/
-
 class TableWidget : StringGridWidget {
     this(string id = null) {
         super(id);
 
         this.cellSelected = new TableWidgetEventHandler();
+    }
+
+    void setColumnHeaders() {
+        import intervis.bijectiveb26;
+        auto columnHeader = BijectiveB26("A");
+
+        for (int i = 0; i < this.cols(); ++i) {
+            if (this.colTitle(i) is null) {
+                this.setColTitle(i, columnHeader.value);
+                ++columnHeader;
+            }
+        }
+    }
+
+    void setRowHeaders() {
+        import std.conv : to;
+        for (int i = 0; i < this.rows(); ++i) {
+            if (this.rowTitle(i) is null) {
+                this.setRowTitle(i, (i+1).to!dstring);
+            }
+        }
     }
 
     override bool onKeyEvent(KeyEvent event) {

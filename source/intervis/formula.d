@@ -1,8 +1,6 @@
 /** Formula parsing module. */
 module intervis.formula;
 
-/* Lexer **/
-
 struct Token {
     this(TokenType type, string symbol) {
         this.type = type;
@@ -29,6 +27,98 @@ enum TokenType {
     Variable,
     EOF
 }
+
+/* Parser **/
+
+struct Parser {
+    this(Lexer lexer) { this.lexer = lexer; }
+
+    auto parse() {
+        import std.conv : to;
+        import std.stdio : writeln; // for now
+        FormulaExpr node;
+
+        final switch (lexer.front().type) {
+            case TokenType.Unknown:
+                throw new Exception("TODO: Unknown token type");
+            case TokenType.Equal:
+                writeln("Implement parse(Equal)");
+                break;
+            case TokenType.Integer:
+                node = new Integer(lexer.front().symbol.to!long);
+                break;
+            case TokenType.Real:
+                node = new Real(lexer.front().symbol.to!double);
+                break;
+            case TokenType.Plus:
+                writeln("Implement parse(Plus)");
+                break;
+            case TokenType.Minus:
+                writeln("Implement parse(Minus)");
+                break;
+            case TokenType.Times:
+                writeln("Implement parse(Times)");
+                break;
+            case TokenType.DivideBy:
+                writeln("Implement parse(DivideBy)");
+                break;
+            case TokenType.LParen:
+                writeln("Implement parse(LParen)");
+                break;
+            case TokenType.RParen:
+                writeln("Implement parse(RParen)");
+                break;
+            case TokenType.LBrace:
+                writeln("Implement parse(LBrace)");
+                break;
+            case TokenType.RBrace:
+                writeln("Implement parse(RBrace)");
+                break;
+            case TokenType.Variable:
+                writeln("Implement parse(Variable)");
+                break;
+            case TokenType.EOF:
+                assert(0, "Should never actually parse EOF token");
+        }
+        lexer.popFront();
+        return node;
+    }
+
+    private:
+
+    Lexer lexer;
+}
+
+class FormulaExpr {}
+
+class Integer : FormulaExpr {
+    this(long value) { this.value = value; }
+    long value;
+}
+
+class Real : FormulaExpr {
+    this(double value) { this.value = value; }
+    double value;
+}
+
+class BinOp : FormulaExpr {
+    this(FormulaExpr left, FormulaExpr right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    FormulaExpr left;
+    FormulaExpr right;
+}
+
+class SumExpr : BinOp {
+    this(FormulaExpr left, FormulaExpr right) {
+        super(left, right);
+    }
+}
+
+/* END Parser **/
+/* Lexer **/
 
 TokenType[string] tokenSymbols() {
     return [
@@ -177,31 +267,3 @@ struct Lexer {
 }
 
 /* END Lexer **/
-
-class FormulaExpr {}
-
-class Integer : FormulaExpr {
-    this(long value) { this.value = value; }
-    long value;
-}
-
-class Real : FormulaExpr {
-    this(double value) { this.value = value; }
-    double value;
-}
-
-class BinOp : FormulaExpr {
-    this(FormulaExpr left, FormulaExpr right) {
-        this.left = left;
-        this.right = right;
-    }
-
-    FormulaExpr left;
-    FormulaExpr right;
-}
-
-class SumExpr : BinOp {
-    this(FormulaExpr left, FormulaExpr right) {
-        super(left, right);
-    }
-}

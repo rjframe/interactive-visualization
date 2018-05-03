@@ -6,6 +6,20 @@ import unit_threaded;
 
 import intervis.formula;
 
+@("Parse values")
+unittest {
+    auto Lexer = Lexer(new TextReader("1 1.23"));
+    auto parser = Parser(Lexer);
+
+    auto node = parser.parse();
+    assert(is(Integer : typeof(node)));
+    assert((cast(Integer)node).value == 1);
+
+    node = parser.parse();
+    assert(is(Real : typeof(node)));
+    assert((cast(Real)node).value == 1.23);
+}
+
 @("The TextReader reads one character at a time")
 unittest {
     auto text = "some\ntext here.\n";
@@ -52,7 +66,7 @@ unittest {
             tokens.front.symbol);
 }
 
-@("Multiple decimal points in a number is an error")
+@("Multiple decimal points in a number is a lexing error")
 unittest {
     import std.exception : assertThrown;
     auto text = "1.2.3";

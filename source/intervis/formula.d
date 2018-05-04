@@ -73,18 +73,10 @@ struct Parser {
                 node = parseDivideExpression();
                 break;
             case TokenType.LParen:
-                lexer.popFront();
-
-                auto outerCurrentNode = currentNode;
-                while (! lexer.empty && lexer.front().type != TokenType.RParen) {
-                    trace("lexer front: ", lexer.front().symbol);
-                    currentNode = parseExpression();
-                }
-                node = currentNode;
-                currentNode = outerCurrentNode;
+                node = parseNestedExpression();
                 break;
             case TokenType.RParen:
-                assert(0, "Unexpected ')' symbol.");
+                throw new Exception("TODO: Unexpected ')' symbol.");
             case TokenType.LBrace:
                 assert(0, "Implement parse(LBrace)");
             case TokenType.RBrace:
@@ -98,6 +90,20 @@ struct Parser {
         }
         lexer.popFront();
         return node;
+    }
+
+    /* ( [expression] ) */
+    FormulaExpr parseNestedExpression() {
+        lexer.popFront();
+
+        auto outerCurrentNode = currentNode;
+        while (! lexer.empty && lexer.front().type != TokenType.RParen) {
+            trace("lexer front: ", lexer.front().symbol);
+            currentNode = parseExpression();
+        }
+        auto tmp = currentNode;
+        currentNode = outerCurrentNode;
+        return tmp;
     }
 
     /* [expression] + [expression] */

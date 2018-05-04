@@ -211,6 +211,7 @@ struct Lexer {
         if (frontAsString in tokenMap) {
             // Operator/sign/other symbol.
             currentToken = Token(tokenMap[frontAsString], frontAsString);
+            reader.popFront();
             return;
         } else if (reader.front().isAlpha) {
             // Keywords and identifiers (variables).

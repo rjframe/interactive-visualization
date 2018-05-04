@@ -44,7 +44,7 @@ struct Parser {
     }
 
     /* op-expression | integer | double | variable | cell-range */
-    auto parseExpression() {
+    FormulaExpr parseExpression() {
         import std.conv : to;
         FormulaExpr node;
 
@@ -73,9 +73,19 @@ struct Parser {
                 node = parseDivideExpression();
                 break;
             case TokenType.LParen:
-                assert(0, "Implement parse(LParen)");
+                lexer.popFront();
+                FormulaExpr inner;
+
+                auto outerCurrentNode = currentNode;
+                while (! lexer.empty && lexer.front().type != TokenType.RParen) {
+                    trace("lexer front: ", lexer.front().symbol);
+                    currentNode = parseExpression();
+                }
+                node = currentNode;
+                currentNode = outerCurrentNode;
+                break;
             case TokenType.RParen:
-                assert(0, "Implement parse(RParen)");
+                assert(0, "Unexpected ')' symbol.");
             case TokenType.LBrace:
                 assert(0, "Implement parse(LBrace)");
             case TokenType.RBrace:

@@ -68,6 +68,27 @@ unittest {
     assert((cast(Integer)expr.right).value == 2);
 }
 
+@("Parse a nested expression")
+unittest {
+    import std.conv : text;
+    auto Lexer = Lexer(new TextReader("1 + (2 - 3)"));
+    auto parser = Parser(Lexer);
+    auto node = parser.parse();
+
+    assert(typeid(node) == typeid(SumExpr));
+    auto outer = cast(SumExpr)node;
+
+    assert(typeid(outer.right) == typeid(SubExpr));
+    auto inner = cast(SubExpr)outer.right;
+
+    assert(typeid(inner.left) == typeid(Integer));
+    assert(typeid(inner.right) == typeid(Integer));
+    assert((cast(Integer)inner.left).value == 2,
+            (cast(Integer)inner.left).value.text);
+    assert((cast(Integer)inner.right).value == 3,
+            (cast(Integer)inner.right).value.text);
+}
+
 @("The TextReader reads one character at a time")
 unittest {
     auto text = "some\ntext here.\n";

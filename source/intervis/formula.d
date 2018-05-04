@@ -74,7 +74,6 @@ struct Parser {
                 break;
             case TokenType.LParen:
                 lexer.popFront();
-                FormulaExpr inner;
 
                 auto outerCurrentNode = currentNode;
                 while (! lexer.empty && lexer.front().type != TokenType.RParen) {

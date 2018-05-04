@@ -82,7 +82,8 @@ struct Parser {
             case TokenType.RBrace:
                 assert(0, "Implement parse(RBrace)");
             case TokenType.Variable:
-                assert(0, "Implement parse(Variable)");
+                node = new Variable(lexer.front().symbol);
+                break;
             case TokenType.At:
                 assert(0, "Implement parse(At)");
             case TokenType.EOF:
@@ -154,6 +155,11 @@ class Integer : FormulaExpr {
 class Real : FormulaExpr {
     this(double value) { this.value = value; }
     double value;
+}
+
+class Variable : FormulaExpr {
+    this(string name) { this.name = name; }
+    string name;
 }
 
 class BinOp : FormulaExpr {
@@ -292,6 +298,7 @@ struct Lexer {
             while (! reader.empty && reader.front().isAlpha) {
                 ident ~= reader.moveFront();
             }
+            currentToken = Token(TokenType.Variable, cast(string)ident);
             return;
         } else if (reader.front().isNumber) {
             char[] number;

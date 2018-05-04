@@ -20,6 +20,24 @@ unittest {
     assert((cast(Real)node).value == 1.23);
 }
 
+@("Parse variable names")
+unittest {
+    auto Lexer = Lexer(new TextReader("x y someVariable"));
+    auto parser = Parser(Lexer);
+
+    auto node = parser.parseExpression();
+    assert(typeid(node) == typeid(Variable));
+    assert((cast(Variable)node).name == "x");
+
+    node = parser.parseExpression();
+    assert(typeid(node) == typeid(Variable));
+    assert((cast(Variable)node).name == "y");
+
+    node = parser.parseExpression();
+    assert(typeid(node) == typeid(Variable));
+    assert((cast(Variable)node).name == "someVariable");
+}
+
 @("Parse a sum expression")
 unittest {
     auto Lexer = Lexer(new TextReader("1 + 2"));

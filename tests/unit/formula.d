@@ -22,12 +22,48 @@ unittest {
 
 @("Parse a sum expression")
 unittest {
-    auto Lexer = Lexer(new TextReader("1+2"));
+    auto Lexer = Lexer(new TextReader("1 + 2"));
     auto parser = Parser(Lexer);
-
     auto node = parser.parse();
+
     assert(typeid(node) == typeid(SumExpr));
     auto expr = cast(SumExpr)node;
+    assert((cast(Integer)expr.left).value == 1);
+    assert((cast(Integer)expr.right).value == 2);
+}
+
+@("Parse a subtraction expression")
+unittest {
+    auto Lexer = Lexer(new TextReader("1 - 2"));
+    auto parser = Parser(Lexer);
+    auto node = parser.parse();
+
+    assert(typeid(node) == typeid(SubExpr));
+    auto expr = cast(SubExpr)node;
+    assert((cast(Integer)expr.left).value == 1);
+    assert((cast(Integer)expr.right).value == 2);
+}
+
+@("Parse a multiplication expression")
+unittest {
+    auto Lexer = Lexer(new TextReader("1 * 2"));
+    auto parser = Parser(Lexer);
+    auto node = parser.parse();
+
+    assert(typeid(node) == typeid(MultiplyExpr));
+    auto expr = cast(MultiplyExpr)node;
+    assert((cast(Integer)expr.left).value == 1);
+    assert((cast(Integer)expr.right).value == 2);
+}
+
+@("Parse a division expression")
+unittest {
+    auto Lexer = Lexer(new TextReader("1 / 2"));
+    auto parser = Parser(Lexer);
+    auto node = parser.parse();
+
+    assert(typeid(node) == typeid(DivideExpr));
+    auto expr = cast(DivideExpr)node;
     assert((cast(Integer)expr.left).value == 1);
     assert((cast(Integer)expr.right).value == 2);
 }

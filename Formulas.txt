@@ -38,14 +38,19 @@ Variable names are case-insensitive.
 
 ## Specification
 
-comma             <== ,
-letter            <== [a..zA..Z]
-digit             <== [0..9]
-integer           <== [+|-]digit{comma | digit}
-double            <== [+|-]digit{comma | digit}.{comma | digit}
-expression        <== op-expression | integer | double | variable
-binop-expression  <== sum-expression | sub-expression
-sum-expression    <== expression + expression
-sub-expression    <== expression - expression
-variable          <== letter{letter}
+comma               <== ,
+letter              <== [a..zA..Z]
+digit               <== [0..9]
+integer             <== [+|-]digit{comma | digit}
+double              <== [+|-]digit{comma | digit}.{comma | digit}
+expression          <== op-expression | integer | double | variable
+                        | cell-reference
+op-expression       <== op-expression
+nop-expression      <== sum-expression | sub-expression
+sum-expression      <== expression + expression
+sub-expression      <== expression - expression
+multiply-expression <== expression * expression
+divide-expression   <== expression / expression
+variable            <== letter{letter}
+cell-reference      <== @cell-range
 

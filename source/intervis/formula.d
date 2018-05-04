@@ -63,11 +63,15 @@ struct Parser {
                 node = parseSumExpression();
                 break;
             case TokenType.Minus:
-                assert(0, "Implement parse(Minus)");
+                // TODO: Could also be a negative value.
+                node = parseSubExpression();
+                break;
             case TokenType.Times:
-                assert(0, "Implement parse(Times)");
+                node = parseMultiplyExpression();
+                break;
             case TokenType.DivideBy:
-                assert(0, "Implement parse(DivideBy)");
+                node = parseDivideExpression();
+                break;
             case TokenType.LParen:
                 assert(0, "Implement parse(LParen)");
             case TokenType.RParen:
@@ -93,6 +97,30 @@ struct Parser {
         auto left = currentNode;
         auto right = parseExpression();
         return new SumExpr(left, right);
+    }
+
+    /* [expression] - [expression] */
+    SubExpr parseSubExpression() {
+        lexer.popFront();
+        auto left = currentNode;
+        auto right = parseExpression();
+        return new SubExpr(left, right);
+    }
+
+    /* [expression] * [expression] */
+    MultiplyExpr parseMultiplyExpression() {
+        lexer.popFront();
+        auto left = currentNode;
+        auto right = parseExpression();
+        return new MultiplyExpr(left, right);
+    }
+
+    /* [expression] / [expression] */
+    DivideExpr parseDivideExpression() {
+        lexer.popFront();
+        auto left = currentNode;
+        auto right = parseExpression();
+        return new DivideExpr(left, right);
     }
 
     private:
@@ -124,6 +152,24 @@ class BinOp : FormulaExpr {
 }
 
 class SumExpr : BinOp {
+    this(FormulaExpr left, FormulaExpr right) {
+        super(left, right);
+    }
+}
+
+class SubExpr : BinOp {
+    this(FormulaExpr left, FormulaExpr right) {
+        super(left, right);
+    }
+}
+
+class MultiplyExpr : BinOp {
+    this(FormulaExpr left, FormulaExpr right) {
+        super(left, right);
+    }
+}
+
+class DivideExpr : BinOp {
     this(FormulaExpr left, FormulaExpr right) {
         super(left, right);
     }

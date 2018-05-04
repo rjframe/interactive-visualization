@@ -11,13 +11,25 @@ unittest {
     auto Lexer = Lexer(new TextReader("1 1.23"));
     auto parser = Parser(Lexer);
 
-    auto node = parser.parse();
-    assert(is(Integer : typeof(node)));
+    auto node = parser.parseExpression();
+    assert(typeid(node) == typeid(Integer));
     assert((cast(Integer)node).value == 1);
 
-    node = parser.parse();
-    assert(is(Real : typeof(node)));
+    node = parser.parseExpression();
+    assert(typeid(node) == typeid(Real));
     assert((cast(Real)node).value == 1.23);
+}
+
+@("Parse a sum expression")
+unittest {
+    auto Lexer = Lexer(new TextReader("1+2"));
+    auto parser = Parser(Lexer);
+
+    auto node = parser.parse();
+    assert(typeid(node) == typeid(SumExpr));
+    auto expr = cast(SumExpr)node;
+    assert((cast(Integer)expr.left).value == 1);
+    assert((cast(Integer)expr.right).value == 2);
 }
 
 @("The TextReader reads one character at a time")
@@ -63,6 +75,18 @@ unittest {
     assert(tokens.moveFront() == Token(TokenType.Real, "32.0"),
             tokens.front.symbol);
     assert(tokens.front() == Token(TokenType.Real, "6540.9"),
+            tokens.front.symbol);
+}
+
+@("Lex a sum expression")
+unittest {
+    auto tokens = Lexer(new TextReader("1 + 2"));
+
+    assert(tokens.moveFront() == Token(TokenType.Integer, "1"),
+            tokens.front.symbol);
+    assert(tokens.moveFront() == Token(TokenType.Plus, "+"),
+            tokens.front.symbol);
+    assert(tokens.front() == Token(TokenType.Integer, "2"),
             tokens.front.symbol);
 }
 

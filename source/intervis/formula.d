@@ -25,25 +25,34 @@ enum TokenType {
     LBrace,
     RBrace,
     Variable,
+    At,
     EOF
 }
 
 /* Parser **/
 
 struct Parser {
+    import intervis.trace;
+
     this(Lexer lexer) { this.lexer = lexer; }
 
     auto parse() {
+        while (! lexer.empty()) {
+            currentNode = parseExpression();
+        }
+        return currentNode;
+    }
+
+    /* op-expression | integer | double | variable | cell-range */
+    auto parseExpression() {
         import std.conv : to;
-        import std.stdio : writeln; // for now
         FormulaExpr node;
 
         final switch (lexer.front().type) {
             case TokenType.Unknown:
                 throw new Exception("TODO: Unknown token type");
             case TokenType.Equal:
-                writeln("Implement parse(Equal)");
-                break;
+                assert(0, "Implement parse(Equal)");
             case TokenType.Integer:
                 node = new Integer(lexer.front().symbol.to!long);
                 break;
@@ -51,32 +60,26 @@ struct Parser {
                 node = new Real(lexer.front().symbol.to!double);
                 break;
             case TokenType.Plus:
-                writeln("Implement parse(Plus)");
+                node = parseSumExpression();
                 break;
             case TokenType.Minus:
-                writeln("Implement parse(Minus)");
-                break;
+                assert(0, "Implement parse(Minus)");
             case TokenType.Times:
-                writeln("Implement parse(Times)");
-                break;
+                assert(0, "Implement parse(Times)");
             case TokenType.DivideBy:
-                writeln("Implement parse(DivideBy)");
-                break;
+                assert(0, "Implement parse(DivideBy)");
             case TokenType.LParen:
-                writeln("Implement parse(LParen)");
-                break;
+                assert(0, "Implement parse(LParen)");
             case TokenType.RParen:
-                writeln("Implement parse(RParen)");
-                break;
+                assert(0, "Implement parse(RParen)");
             case TokenType.LBrace:
-                writeln("Implement parse(LBrace)");
-                break;
+                assert(0, "Implement parse(LBrace)");
             case TokenType.RBrace:
-                writeln("Implement parse(RBrace)");
-                break;
+                assert(0, "Implement parse(RBrace)");
             case TokenType.Variable:
-                writeln("Implement parse(Variable)");
-                break;
+                assert(0, "Implement parse(Variable)");
+            case TokenType.At:
+                assert(0, "Implement parse(At)");
             case TokenType.EOF:
                 assert(0, "Should never actually parse EOF token");
         }
@@ -84,9 +87,18 @@ struct Parser {
         return node;
     }
 
+    /* [expression] + [expression] */
+    SumExpr parseSumExpression() {
+        lexer.popFront();
+        auto left = currentNode;
+        auto right = parseExpression();
+        return new SumExpr(left, right);
+    }
+
     private:
 
     Lexer lexer;
+    FormulaExpr currentNode;
 }
 
 class FormulaExpr {}
